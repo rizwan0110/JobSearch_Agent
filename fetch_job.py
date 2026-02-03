@@ -1,9 +1,13 @@
 import requests
+import json
 from datetime import datetime, timezone
+from pathlib import Path
 
-def fetch_ai_jobs():
-    BASE_URL = "https://jobsearch.api.jobtechdev.se/search"
 
+BASE_URL = "https://jobsearch.api.jobtechdev.se/search"
+
+
+def fetch_ai_jobs_today():
     params = {
         "q": "AI",
         "limit": 100,
@@ -41,12 +45,30 @@ def fetch_ai_jobs():
                 })
 
         params["offset"] += params["limit"]
-    
-    return today_jobs
+
+    return today_jobs, today
+
+
+def save_jobs_to_file(jobs, date):
+    data_dir = Path("data")
+    data_dir.mkdir(exist_ok=True)
+
+    file_path = data_dir / f"jobs_{date}.json"
+
+
+    with open(file_path, "w", encoding="utf-8") as f:
+        json.dump(jobs, f, indent=2, ensure_ascii=False)
+
+    return file_path
+
 
 if __name__ == "__main__":
-    jobs = fetch_ai_jobs()
-    print(f"Total jobs found today: {len(jobs)}")
-    ##Printing Job Details
+    jobs, today = fetch_ai_jobs_today()
 
-    
+    print(f"\nTotal jobs found today: {len(jobs)}")
+
+    if jobs:
+        file_path = save_jobs_to_file(jobs, today)
+        print(f"Jobs saved to: {file_path}")
+    else:
+        print("No AI-related jobs found today.")
