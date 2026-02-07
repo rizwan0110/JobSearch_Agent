@@ -1,0 +1,185 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-02-06",
+  "candidate": {
+    "full_name": "Rizwan Razik",
+    "current_profile_label": "Early-career AI / ML Engineer",
+    "base_location": {
+      "city": "Stockholm",
+      "country": "Sweden"
+    },
+    "contact": {
+      "email": "rizwanrazik724@gmail.com",
+      "phone": "+46 769750887",
+      "linkedin": "https://www.linkedin.com/in/mhd-rizwan/",
+      "github": "https://github.com/rizwan0110",
+      "portfolio": "https://rizwan0110.github.io/Portfolio2.0/"
+    }
+  },
+  "targeting": {
+    "target_roles": [
+      "AI Engineer",
+      "Junior AI Engineer",
+      "Machine Learning Engineer",
+      "Junior Machine Learning Engineer",
+      "GenAI Engineer",
+      "LLM Engineer",
+      "Data Scientist",
+      "AI Software Engineer",
+      "PhD Candidate (AI/ML)"
+    ],
+    "location_preferences": {
+      "allowed": "anywhere",
+      "notes": "Location is not a constraint; remote or onsite is fine."
+    },
+    "seniority_preferences": {
+      "include_levels": ["intern", "junior", "entry", "mid"],
+      "exclude_if_min_years_experience_greater_than": 2,
+      "notes": "Open to junior and mid-level roles unless the job clearly requires high years of experience or senior/lead titles."
+    }
+  },
+  "skills": {
+    "programming_languages": ["Python", "C++", "SQL"],
+    "tools": ["Git", "Linux", "KNIME", "PowerBI", "n8n", "Cursor"],
+    "ml_ai_frameworks": [
+      "Scikit-learn",
+      "PyTorch",
+      "TensorFlow",
+      "Keras",
+      "LangChain",
+      "Hugging Face",
+      "LangGraph"
+    ],
+    "data_libraries": ["Pandas", "NumPy", "Seaborn"],
+    "cloud_and_deployment": [
+      "Azure AI Services (AI Foundry, AI Search, WebApps)",
+      "GCP (Vertex AI)"
+    ],
+    "focus": {
+      "mode": "flexible",
+      "notes": "No single fixed focus area. Prioritize matching based on technical skills, relevant experience, and role/title alignment."
+    }
+  },
+  "experience": {
+    "summary": "Hands-on experience in machine learning and LLM-based systems through academic projects, applied research, and industry collaboration. Strong Python and applied AI background.",
+    "work_history": [
+      {
+        "company": "Volvo Construction Equipment",
+        "location": "Eskilstuna, Sweden",
+        "work_mode": "onsite/hybrid (unspecified)",
+        "title": "Master Thesis Student",
+        "start_date": "2025-01",
+        "end_date": "2025-06",
+        "highlights": [
+          "Designed and implemented a persona-based RAG chatbot prototype to support exploration and analysis of customer personas for stakeholders.",
+          "Generated synthetic customer personas using prompting techniques.",
+          "Presented and documented research findings and demo to Volvo CE engineers."
+        ],
+        "skills_used": ["Python", "RAG", "Prompt Engineering", "LLM Evaluation","Azure AI"]
+      },
+      {
+        "company": "PerformanceX",
+        "location": "Remote",
+        "work_mode": "remote",
+        "title": "AI Research & Development Intern",
+        "start_date": "2024-08",
+        "end_date": "2024-09",
+        "highlights": [
+          "Conducted data collection and preprocessing from expert interviews and articles.",
+          "Designed and built an AI coaching app using RAG to support athletes.",
+          "Tested with multiple LLMs and evaluated their performance manually."
+        ],
+        "skills_used": ["Python", "RAG", "LLMs", "Data Collection", "Evaluation","PineCone"]
+      },
+      {
+        "company": "Allianz Technology",
+        "location": "Trivandrum, India",
+        "work_mode": "onsite (unspecified)",
+        "title": "Software Engineer",
+        "start_date": "2022-03",
+        "end_date": "2023-06",
+        "highlights": [
+          "Resolved technical issues for AZDMS, achieving a 98% SLA resolution rate.",
+          "Installed, upgraded, and configured IBM FileNet P8 on Linux.",
+          "Applied Agile methodologies to manage CPI across global FileNet installations."
+        ],
+        "skills_used": ["Linux", "Enterprise Systems", "Troubleshooting", "Agile","FileNet P8"]
+      }
+    ],
+    "education": [
+      {
+        "degree": "MS",
+        "field": "AI Engineering",
+        "institution": "Jönköping University",
+        "start_date": "2023-08",
+        "end_date": "2025-06"
+      },
+      {
+        "degree": "BE",
+        "field": "Computer Science",
+        "institution": "Mangalore Institute of Technology and Engineering",
+        "start_date": "2017-03",
+        "end_date": "2021-06"
+      }
+    ],
+    "projects": [
+      {
+        "name": "Warehouse Robotics Path Optimization using Q-Learning",
+        "type": "Reinforcement Learning",
+        "highlights": [
+          "Trained a Q-learning RL model for autonomous warehouse navigation on a 15×15 grid with real-time GUI."
+        ],
+        "skills_used": ["Python", "Reinforcement Learning", "Q-Learning"]
+      },
+      {
+        "name": "Cable Drum Reusability Classification – Drumster",
+        "type": "Computer Vision",
+        "highlights": [
+          "Built a VGG16-based CNN with Grad-CAM to classify reusable cable drums (88% accuracy, 92% F1-score)."
+        ],
+        "skills_used": ["Python", "CNNs", "Computer Vision", "Model Explainability (Grad-CAM)"]
+      },
+      {
+        "name": "Customer Churn Prediction – Skogsro Spa",
+        "type": "Machine Learning",
+        "highlights": [
+          "Evaluated and compared four ML models on e-commerce spa transaction data to predict customer churn."
+        ],
+        "skills_used": ["Python", "Scikit-learn", "Pandas", "Model Evaluation"]
+      },
+      {
+        "name": "Customer Claims Prediction – Dunstan Insurance",
+        "type": "Machine Learning",
+        "highlights": [
+          "Built a classification model to predict horse insurance claims using customer history and behavioral patterns."
+        ],
+        "skills_used": ["Python", "Classification", "Feature Engineering", "Model Evaluation"]
+      }
+    ]
+  },
+  "agent_matching_rules": {
+    "primary_match_signals": [
+      "Role title aligns with target_roles OR job responsibilities clearly align with AI/ML/LLM work",
+      "Strong overlap with core skills (Python, ML, LLM/RAG, cloud AI)",
+      "Job responsibilities fit applied AI/ML/LLM system building"
+    ],
+    "negative_filters": [
+      {
+        "rule": "exclude_if_min_years_experience_greater_than",
+        "value": 2,
+        "reason": "Avoid jobs requiring high experience compared to current early-career level."
+      },
+      {
+        "rule": "exclude_if_title_contains",
+        "value": ["Senior", "Lead", "Principal", "Staff", "Head of"],
+        "reason": "Avoid roles that are clearly senior-level even if years are not explicitly stated."
+      }
+    ],
+    "llm_instruction_focus": [
+      "Prioritize technical skill match, relevant experience match, and target title alignment.",
+      "If the job is clearly AI/ML/LLM-related but the title is unusual, still consider it.",
+      "Reject roles that demand high years of experience or senior/lead responsibility.",
+      "De-prioritize buzzwords and vague claims; prefer concrete requirements and responsibilities."
+    ]
+  }
+}
