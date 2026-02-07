@@ -1,0 +1,12 @@
+{
+  "run_date": "2026-02-07",
+  "stats": {
+    "profile_loaded": true,
+    "jobs_source": "data\\new_jobs_2026-02-07.json",
+    "jobs_loaded": 4,
+    "matching_ran": false,
+    "note": "LLM matching not implemented yet"
+  },
+  "matches": [],
+  "rejected": []
+}
