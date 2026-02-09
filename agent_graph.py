@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import re
+import time
+import ollama
 import json
 from datetime import date, timedelta
 from pathlib import Path
@@ -12,7 +15,7 @@ from langgraph.graph import StateGraph, START, END
 class AgentState(TypedDict, total=False):
     run_date: str
     profile: Dict[str, Any]
-    jobs: List[Dict[str, Any]]          # jobs to evaluate (usually new_jobs)
+    jobs: List[Dict[str, Any]]          # jobs to evaluate
     matches: List[Dict[str, Any]]       # filled later by LLM
     rejected: List[Dict[str, Any]]      # filled later by LLM
     stats: Dict[str, Any]
@@ -37,6 +40,105 @@ def _write_json(path: Path, data: Any) -> None:
     with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
+def _safe_json_loads(text: str):
+    """
+    Try to parse JSON even if the model returns extra text.
+    Extract the first {...} block and parse it.
+    """
+    text = text.strip()
+
+    # Fast path: already clean JSON
+    try:
+        return json.loads(text)
+    except Exception:
+        pass
+
+    # Try extracting JSON object from messy output
+    m = re.search(r"\{.*\}", text, flags=re.DOTALL)
+    if not m:
+        raise ValueError("No JSON object found in model output.")
+    return json.loads(m.group(0))
+
+
+def _estimate_required_years(job_text: str) -> int | None:
+    """
+    Very simple heuristic: look for patterns like '3+ years', '5 years of experience'.
+    We'll use this only as a soft pre-filter.
+    """
+    patterns = [
+        r"(\d+)\s*\+\s*years",
+        r"(\d+)\s*years\s+of\s+experience",
+        r"minimum\s+(\d+)\s*years"
+    ]
+    for p in patterns:
+        m = re.search(p, job_text.lower())
+        if m:
+            try:
+                return int(m.group(1))
+            except Exception:
+                return None
+    return None
+
+
+def llm_match_job_ollama(job: dict, profile: dict, model: str = "llama3.2:1b") -> dict:
+    """
+    Ask llama (via Ollama) to decide whether this job matches the profile.
+    Return strict JSON dict with: match, score, reasons, red_flags.
+    """
+    jd = job.get("description") or ""
+    title = job.get("title") or ""
+    company = job.get("company") or ""
+    location = job.get("location") or ""
+    url = job.get("url") or ""
+
+    system = (
+        "You are an AI job-matching assistant. "
+        "You must output ONLY valid JSON and nothing else."
+    )
+
+    # We keep the output schema very small and stable (easy to parse).
+    schema_instructions = """
+Return ONLY JSON with exactly these keys:
+{
+  "match": "yes" or "no",
+  "score": integer from 0 to 100,
+  "reasons": [string, ...],
+  "red_flags": [string, ...]
+}
+Rules:
+- Prefer technical skill match, relevant experience match, and role/title alignment.
+- Reject if the role is clearly senior/lead or requires high years of experience for an early-career profile.
+- Be concise: 2-5 reasons max, 0-5 red_flags max.
+"""
+
+    user = f"""
+CANDIDATE PROFILE (JSON):
+{json.dumps(profile, ensure_ascii=False)}
+
+JOB:
+Title: {title}
+Company: {company}
+Location: {location}
+URL: {url}
+
+JOB DESCRIPTION:
+{jd}
+
+{schema_instructions}
+""".strip()
+
+    resp = ollama.chat(
+        model=model,
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ],
+        # If your ollama version supports structured output, you can try:
+        # format="json"
+    )
+
+    content = resp["message"]["content"]
+    return _safe_json_loads(content)
 
 # ---------- 3) Nodes ----------
 def load_profile_node(state: AgentState) -> AgentState:
@@ -90,12 +192,82 @@ def route_if_no_jobs(state: AgentState) -> Literal["match_jobs_node", "save_resu
 
 def match_jobs_node(state: AgentState) -> AgentState:
     """
-    Placeholder for tomorrow's LLM matching.
-    For now, just pass through and record that matching was skipped/placeholder.
+    For each job in state['jobs'], call llama (Ollama) and decide match/no-match.
+    Adds results into state['matches'] and state['rejected'].
     """
+    profile = state.get("profile", {})
+    jobs = state.get("jobs", [])
+
+    matches = []
+    rejected = []
+
+    # Read the experience threshold from profile rules (default 2 if missing)
+    exp_threshold = 2
+    try:
+        exp_threshold = int(profile["targeting"]["seniority_preferences"]["exclude_if_min_years_experience_greater_than"])
+    except Exception:
+        exp_threshold = 2
+
+    # Senior keyword filter (fast reject without LLM)
+    senior_keywords = ("senior", "lead", "principal", "staff", "head of")
+
+    for idx, job in enumerate(jobs, start=1):
+        title = (job.get("title") or "").lower()
+        jd = (job.get("description") or "")
+        combined_text = f"{job.get('title','')}\n{jd}"
+
+        # 1) quick rule-based skip for obvious senior titles
+        if any(k in title for k in senior_keywords):
+            rejected.append({
+                **job,
+                "decision": {"match": "no", "score": 0,
+                             "reasons": ["Role appears senior-level based on title."],
+                             "red_flags": ["Senior/Lead title"]}
+            })
+            continue
+
+        # 2) quick heuristic on years of experience
+        years = _estimate_required_years(combined_text)
+        if years is not None and years > exp_threshold:
+            rejected.append({
+                **job,
+                "decision": {"match": "no", "score": 0,
+                             "reasons": [f"Role appears to require {years}+ years of experience (threshold {exp_threshold})."],
+                             "red_flags": [f"Experience requirement: {years}+ years"]}
+            })
+            continue
+
+        # 3) LLM decision
+        try:
+            decision = llm_match_job_ollama(job, profile, model="llama3.2:1b")
+        except Exception as e:
+            # If parsing/model fails, reject safely but record error
+            decision = {"match": "no", "score": 0, "reasons": ["LLM evaluation failed."], "red_flags": [str(e)]}
+
+        record = {**job, "decision": decision}
+
+        if str(decision.get("match", "")).lower() == "yes":
+            matches.append(record)
+        else:
+            rejected.append(record)
+
+        # small delay so you don't hammer your local model
+        time.sleep(0.1)
+
+        # Optional: progress print
+        print(f"[match] {idx}/{len(jobs)} -> {decision.get('match')} (score={decision.get('score')})")
+
     return {
         **state,
-        "stats": {**state.get("stats", {}), "matching_ran": False, "note": "LLM matching not implemented yet"},
+        "matches": matches,
+        "rejected": rejected,
+        "stats": {
+            **state.get("stats", {}),
+            "matching_ran": True,
+            "matches_count": len(matches),
+            "rejected_count": len(rejected),
+            "exp_threshold": exp_threshold,
+        }
     }
 
 
