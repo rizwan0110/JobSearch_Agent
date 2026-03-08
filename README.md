@@ -30,7 +30,8 @@ The system runs once per day (6:30 PM) using **Windows Task Scheduler** and foll
 
 To better understand how the system works, see the diagram below.
 
-docs/architecture.png
+
+![Architecture](docs/architecture.png)
 
 
 # Example Email Output
@@ -39,35 +40,36 @@ The system sends a daily email with a summary of the analysed jobs and the jobs 
 
 Screenshot:
 
-docs/email_example.png
+
+![Email Example](docs/email_example.png)
 
 
 # Project Structure
 
 # Project Structure
-JobSearch-Agent
-│
-├── data/                # stored job data
-├── fetch_jobs.py        # fetch jobs from API
-├── prefilter.py         # rule-based filtering
-├── llm_score.py         # LLM evaluation logic
-├── score_today.py       # scoring pipeline
-├── send_email.py        # email notification
-├── main.py              # run full workflow
-├── requirements.txt
-└── README.md
+File structure of the project 
+
+- data/                # stored job data
+- fetch_jobs.py        # fetch jobs from API
+- prefilter.py         # rule-based filtering
+- llm_score.py         # LLM evaluation logic
+- score_today.py       # scoring pipeline
+- send_email.py        # email notification
+- main.py              # run full workflow
+- requirements.txt
+- README.md
 
 # Technologies Used
 
-Python
-
-Ollama
-
-Phi-3 Mini (local LLM)
-
-Gmail SMTP
-
-JobTech API (Arbetsförmedlingen)
+- Python
+  
+- Ollama
+  
+- Phi-3 Mini (local LLM)
+  
+- Gmail SMTP
+  
+- JobTech API (Arbetsförmedlingen)
 
 # Setup
 
@@ -77,10 +79,12 @@ pip install -r requirements.txt
 
 # Environment Variables
 
-Create a .env file:
+Create a .env file with the following fields
 
 GMAIL_SENDER=your_email@gmail.com
+
 GMAIL_RECEIVER=your_email@gmail.com
+
 GMAIL_APP_PASSWORD=your_gmail_app_password
 
 # Runnig the System
@@ -103,11 +107,8 @@ This will:
 
 Some ideas for future versions:
 
-- Convert the workflow into a true AI agent using LangGraph
-
+- Convert the workflow into a true AI agent using **LangGraph**
 - Add a web dashboard
-
 - Add job application tracking
-
-- Add support for multiple job sites 
+- Add support for multiple job sites
 
