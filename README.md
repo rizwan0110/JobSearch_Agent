@@ -2,7 +2,7 @@
 
 # Overview
 
-This project is a AI system that helps the candidate find relevant jobs easily.
+This project is a AI system that helps the candidates find relevant jobs easily.
 
 The system begins by fetching related (AI in my case) job postings, filters out irrelevant roles, evaluates the remaining jobs using a local AI model, and sends the best matches by email.
 
