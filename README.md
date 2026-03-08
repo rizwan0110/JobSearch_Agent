@@ -2,53 +2,47 @@
 
 # Overview
 
-This project is a AI system that helps the candidates find relevant jobs easily.
+Job seekers often spend a lot of time reading job descriptions to check if a job is a good match. This becomes difficult when there are many job postings every day. This project is an AI-based system that helps candidates find relevant jobs more easily.
 
-The system begins by fetching related (AI in my case) job postings, filters out irrelevant roles, evaluates the remaining jobs using a local AI model, and sends the best matches by email.
+The system fetches related job postings (AI roles in my case), filters out irrelevant roles, evaluates the remaining jobs using a local AI model, and sends the best matches by email.
 
-My goal of working with this project is to:
+My goal in building this project is to:
 
 - learn how AI systems can automate tasks
-
-- practice building AI workflow
-
+- practice building an AI workflow
 - help with my own job search
-
 - build a practical portfolio project
+
 
 # How the System Works
 
-The system runs once per day (6:30 pm) using windows task scheduler and follows these steps:
+The system runs once per day (6:30 PM) using **Windows Task Scheduler** and follows these steps:
 
-1. Fetch jobS related to from the Arbetsförmedlingen (Swedish Employement Service) using API.
-
+1. Fetch jobs related to AI from **Arbetsförmedlingen (Swedish Employment Service)** using the JobTech API.
 2. Save the job data locally.
-
 3. Apply a simple rule-based filter to remove irrelevant roles.
-
-4. Send each remaining job to a local LLM (phi3:mini) for evaluation.
-
+4. Send each remaining job to a local LLM (**phi3:mini**) for evaluation.
 5. Score the job based on relevance to my profile.
-
 6. Send the best job matches by email.
+
 
 # Architecture
 
-To better understand the working of this project, refer the diagram below:
-
-
+To better understand how the system works, see the diagram below.
 
 docs/architecture.png
+
+
 # Example Email Output
 
-The system sends a daily email with the summary of the analysed jobs and the jobs that are matched to the candidate.
-
-
+The system sends a daily email with a summary of the analysed jobs and the jobs that match the candidate profile.
 
 Screenshot:
 
 docs/email_example.png
 
+
+# Project Structure
 
 # Project Structure
 JobSearch-Agent
