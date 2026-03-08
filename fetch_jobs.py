@@ -1,0 +1,71 @@
+import requests
+import json
+from datetime import datetime
+from pathlib import Path
+
+BASE_URL = "https://jobsearch.api.jobtechdev.se/search"
+
+
+def fetch_ai_jobs_today():
+    params = {"q": "AI", "limit": 100, "offset": 0}
+
+    today = datetime.now().date()
+    jobs_by_url = {}
+
+    while True:
+        r = requests.get(BASE_URL, params=params, timeout=30)
+        r.raise_for_status()
+        data = r.json()
+        hits = data.get("hits", [])
+
+        if not hits:
+            break
+
+        for job in hits:
+            pub_date_str = job.get("publication_date")
+            url = job.get("webpage_url")
+
+            if not pub_date_str or not url:
+                continue
+
+            pub_date = datetime.fromisoformat(pub_date_str).date()
+
+            if pub_date != today:
+                continue
+
+            jobs_by_url[url] = {
+                "id": job.get("id"),
+                "published_at": pub_date_str,
+                "title": job.get("headline"),
+                "company": job.get("employer", {}).get("name"),
+                "description": job.get("description", {}).get("text"),
+                "url": url
+            }
+
+        params["offset"] += params["limit"]
+
+    return list(jobs_by_url.values()), today
+
+
+def save_jobs_to_file(jobs, date):
+    data_dir = Path("data")
+    data_dir.mkdir(exist_ok=True)
+
+    file_path = data_dir / f"jobs_{date}.json"
+
+    with open(file_path, "w", encoding="utf-8") as f:
+        json.dump(jobs, f, indent=2, ensure_ascii=False)
+
+    return file_path
+
+
+if __name__ == "__main__":
+    jobs, today = fetch_ai_jobs_today()
+
+    print(f"\nTotal jobs found today: {len(jobs)}")
+
+    if jobs:
+        fp = save_jobs_to_file(jobs, today)
+        print(f"Jobs saved to: {fp}")
+    else:
+        print("No AI-related jobs found today.")

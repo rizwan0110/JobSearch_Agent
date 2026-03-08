@@ -1,5 +1,2 @@
-langgraph
-langchain
-langchain-ollama
-ollama
-pydantic
+requests
+python-dotenv
