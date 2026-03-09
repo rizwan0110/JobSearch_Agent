@@ -47,7 +47,6 @@ Screenshot:
 
 # Project Structure
 
-# Project Structure
 File structure of the project 
 
 - data/                # stored job data
@@ -88,7 +87,7 @@ GMAIL_RECEIVER=your_email@gmail.com
 
 GMAIL_APP_PASSWORD=your_gmail_app_password
 
-# Runnig the System
+# Running the System
 
 To Run the full workflow, run the script
 - python main.py
