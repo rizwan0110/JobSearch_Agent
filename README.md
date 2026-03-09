@@ -31,7 +31,7 @@ The system runs once per day (6:30 PM) using **Windows Task Scheduler** and foll
 To better understand how the system works, see the diagram below.
 
 
-![Architecture](docs/architecture.png)
+![Architecture](src/email_example.png)
 
 
 # Example Email Output
@@ -42,6 +42,7 @@ Screenshot:
 
 
 ![Email Example](docs/email_example.png)
+
 
 
 # Project Structure
