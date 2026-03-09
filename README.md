@@ -41,7 +41,7 @@ The system sends a daily email with a summary of the analysed jobs and the jobs 
 Screenshot:
 
 
-![Email Example](docs/email_example.png)
+![Email Example](src/email_example.png)
 
 
 
