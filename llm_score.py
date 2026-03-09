@@ -50,7 +50,7 @@ Job description: {description}
     }
 
     try:
-        r = requests.post(OLLAMA_URL, json=payload, timeout=780)
+        r = requests.post(OLLAMA_URL, json=payload, timeout=1800)
         r.raise_for_status()
 
         data = r.json()
