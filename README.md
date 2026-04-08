@@ -4,7 +4,7 @@
 
 Job seekers often spend a lot of time reading job descriptions to check if a job is a good match. This becomes difficult when there are many job postings every day. This project is an AI-based system that helps candidates find relevant jobs more easily.
 
-The system fetches related job postings (AI roles in my case), filters out irrelevant roles, evaluates the remaining jobs using a local AI model, and sends the best matches by email.
+The system fetches related job postings (AI roles in my case), filters out irrelevant roles, evaluates the remaining jobs using an AI model, and sends the best matches by email.
 
 My goal in building this project is to:
 
@@ -21,7 +21,7 @@ The system runs once per day (6:30 PM) using **Windows Task Scheduler** and foll
 1. Fetch jobs related to AI from **Arbetsförmedlingen (Swedish Employment Service)** using the JobTech API.
 2. Save the job data locally.
 3. Apply a simple rule-based filter to remove irrelevant roles.
-4. Send each remaining job to a local LLM (**phi3:mini**) for evaluation.
+4. Send each remaining job to an LLM (**llama-3.1-8b**) for evaluation.
 5. Score the job based on relevance to my profile.
 6. Send the best job matches by email.
 
@@ -63,9 +63,9 @@ File structure of the project
 
 - Python
   
-- Ollama
+- Groq
   
-- Phi-3 Mini (local LLM)
+- llama-3.1-8b (LLM)
   
 - Gmail SMTP
   
@@ -86,6 +86,10 @@ GMAIL_SENDER=your_email@gmail.com
 GMAIL_RECEIVER=your_email@gmail.com
 
 GMAIL_APP_PASSWORD=your_gmail_app_password
+
+GROQ_API_KEY=api_key_from_groq
+
+MODEL_NAME = your_model_name
 
 # Running the System
 
