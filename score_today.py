@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 from prefilter import prefilter_jobs
-from llm_score import score_job_with_ollama
+from llm_score import score_job_with_groq
 
 
 def latest_jobs_file():
@@ -50,7 +50,7 @@ def main():
         })
 
     for i, job in enumerate(kept, start=1):
-        result = score_job_with_ollama(job)
+        result = score_job_with_groq(job)
         scored.append({**job, **result})
 
         print(

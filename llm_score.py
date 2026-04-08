@@ -1,12 +1,19 @@
-import requests
+from groq import Groq
 import json
 import re
+from dotenv import load_dotenv
+import os
 
-OLLAMA_URL = "http://localhost:11434/api/generate"
-MODEL_NAME = "phi3:mini"
+load_dotenv() 
+
+client = Groq(
+    api_key=os.environ.get("GROQ_API_KEY"),
+)
+
+MODEL_NAME = os.environ.get("MODEL_NAME")
 
 
-def score_job_with_ollama(job):
+def score_job_with_groq(job):
     title = job.get("title", "")
     company = job.get("company", "")
     description = job.get("description", "") or ""
@@ -40,21 +47,21 @@ Company: {company}
 Job description: {description}
 """.strip()
 
-    payload = {
-        "model": MODEL_NAME,
-        "prompt": prompt,
-        "stream": False,
-        "options": {
-            "temperature": 0.0
-        }
-    }
-
     try:
-        r = requests.post(OLLAMA_URL, json=payload, timeout=1800)
-        r.raise_for_status()
+        completion = client.chat.completions.create(
+            model=MODEL_NAME,
+            messages=[
+                {"role": "system", "content": "Return only valid JSON."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.0,
+            max_completion_tokens=300,
+            stream=False  # IMPORTANT: disable streaming
+        )
 
-        data = r.json()
-        text = (data.get("response") or "").strip()
+
+
+        text = completion.choices[0].message.content.strip()
 
         match_json = re.search(r"\{.*?\}", text, re.DOTALL)
 
@@ -72,14 +79,11 @@ Job description: {description}
         score = int(result.get("score", 0))
         reason = str(result.get("reason", "")).strip()
 
-        if score < 0:
-            score = 0
-        if score > 100:
-            score = 100
+        score = max(0, min(100, score))
         if not reason:
             reason = "No reason given."
 
         return {"match": match, "score": score, "reason": reason}
 
     except Exception as e:
-        return {"match": False, "score": 0, "reason": f"Ollama error: {e}"}
+        return {"match": False, "score": 0, "reason": f"Groq error: {e}"}
